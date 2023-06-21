@@ -5,15 +5,17 @@ let readLinkFromHtml = (path) => {
   console.log(path);
   const readFileStream = fs.createReadStream(path);
   let htmlData = "";
-  readFileStream.on("data", (chunk) => (htmlData += chunk));
-  readFileStream.on("error", (err) => {
-    // console.log("hello");
-    console.log("No such file exist", err);
-    return err;
-  });
-  readFileStream.on("end", () => {
-    // console.log(htmlData);
-    return htmlData;
+  return new Promise((resolve, reject) => {
+    readFileStream.on("data", (chunk) => (htmlData += chunk));
+    readFileStream.on("error", (err) => {
+      // console.log("hello");
+      console.log("No such file exist", err);
+      reject(err);
+    });
+    readFileStream.on("end", () => {
+      // console.log(htmlData);
+      resolve(htmlData);
+    });
   });
 };
 

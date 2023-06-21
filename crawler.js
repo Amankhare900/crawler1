@@ -27,7 +27,7 @@ async function crawler(maxDepth, waitingQueue, queue, path, visitedUrls, sid) {
   while (queue.length > 0 || waitingQueue.length > 0) {
     // while (true) {
     // if (queue.length === 0 && waitingQueue.length === 0) {
-    //   break;
+    // break;
     // }
     if (
       Date.now() - WaitingQueueReplenishTime === 60000 &&
@@ -63,6 +63,7 @@ async function crawler(maxDepth, waitingQueue, queue, path, visitedUrls, sid) {
         }
       );
       connection_queue = [];
+      let writePromises = [];
       await Promise.allSettled(fetchPromises)
         //results will we the arr of all the settled array
         .then((results) => {
@@ -76,37 +77,38 @@ async function crawler(maxDepth, waitingQueue, queue, path, visitedUrls, sid) {
               // crawledLink = 1;
               count = 1;
             }
-            WriteLinkToHtml(
-              `${path}/htmlFile/${firstResult.newDepth}`,
-              firstResult.html,
-              firstResult.crawledLink
-            )
-              .then((path) => {
-                return readLinkFromHtml(path);
-              })
-              .then((htmlData) => {
-                // console.log(htmlData);
-                return getLinks(htmlData, firstResult.url);
-              })
-              .then((links) => {
-                // console.log(links);
-                for (const link of links) {
-                  crawledLink = count;
-                  if (
-                    !visitedUrls.has(link) &&
-                    firstResult.newDepth < maxDepth
-                  ) {
-                    count++;
-                    queue.push({
-                      url: link,
-                      depth: firstResult.newDepth + 1,
-                      crawledLink: crawledLink++,
-                    });
-                    visitedUrls.add(link);
-                  }
-                }
-              });
-            console.log(queue);
+            writePromises.push(
+              WriteLinkToHtml(
+                `${path}/htmlFile/${firstResult.newDepth}`,
+                firstResult.html,
+                firstResult.crawledLink
+              )
+                .then((path) => readLinkFromHtml(path))
+                .then((htmlData) => {
+                  // console.log(htmlData);
+                  return getLinks(htmlData, firstResult.url);
+                })
+                .then((links) => {
+                  return new Promise(() => {
+                    // console.log(links);
+                    for (const link of links) {
+                      crawledLink = count;
+                      if (
+                        !visitedUrls.has(link) &&
+                        firstResult.newDepth < maxDepth
+                      ) {
+                        count++;
+                        queue.push({
+                          url: link,
+                          depth: firstResult.newDepth + 1,
+                          crawledLink: crawledLink++,
+                        });
+                        visitedUrls.add(link);
+                      }
+                    }
+                  });
+                })
+            );
           } else {
             console.log("All requests failed.");
           }
@@ -114,6 +116,9 @@ async function crawler(maxDepth, waitingQueue, queue, path, visitedUrls, sid) {
         .catch((error) => {
           console.error("An error occurred:", error);
         });
+      await Promise.allSettled(writePromises).then(() => {
+        console.log(queue);
+      });
     } catch (err) {
       console.error(`Error fetching`, err);
     }

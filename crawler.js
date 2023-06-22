@@ -5,7 +5,7 @@ const backUp = require("./backUp");
 const rateLimiter = require("./ratelimiter");
 const readLinkFromHtml = require("./read");
 const fs = require("fs");
-
+//remove the delay function
 async function crawler(maxDepth, waitingQueue, queue, path, visitedUrls, sid) {
   // console.log(maxDepth, waitingQueue, queue, path, visitedUrls);
 
@@ -35,6 +35,7 @@ async function crawler(maxDepth, waitingQueue, queue, path, visitedUrls, sid) {
       continue;
     }
     // console.log("printing queue", queue);
+    // added the setTimeout to stop the url to go again and again
     if (domainMap.get("max_connection") === 0) {
       console.log("waiting 30 sec");
       await new Promise((resolve) => {
@@ -78,15 +79,10 @@ async function crawler(maxDepth, waitingQueue, queue, path, visitedUrls, sid) {
             if (resolvedResults.length > 0) {
               // const firstResult = resolvedResults[0].value;
               // newly added line implemented
+              // added the for loop to get all the result form the resolvedResults array
 
               resolvedResults.forEach((data) => {
                 const firstResult = data.value;
-                // console.log(
-                //   "printing first result",
-                //   firstResult.newDepth,
-                //   firstResult.html,
-                //   firstResult.crawledLink
-                // );
                 if (
                   !fs.existsSync(`${path}/htmlFile/${firstResult.newDepth}`)
                 ) {

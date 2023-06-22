@@ -1,6 +1,7 @@
 let aTReg = /<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1/g;
 
 let getLinks = (htmlData, baseUrl, visitedUrls) => {
+  console.log("inside the getLinks Function");
   let match;
   let links = [];
   return new Promise((resolve) => {

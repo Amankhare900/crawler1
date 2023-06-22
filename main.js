@@ -96,7 +96,8 @@ if (testing === "t") {
   // console.log("visitedUrls", visitedUrls);
   //here [] implies the waitingQueue
   // queue, waitingQueue, visitedUrls, sid
-  backUp(queue, [], visitedUrls, session_id);
+  let setArray = Array.from(visitedUrls);
+  backUp(queue, [], setArray, session_id);
   // updating the session.json file by adding the new session_id : url;
   fs.writeFileSync("./session.json", JSON.stringify(obj));
 

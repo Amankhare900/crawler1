@@ -105,6 +105,7 @@ async function crawler(maxDepth, waitingQueue, queue, path, visitedUrls, sid) {
                     })
                     .then((links) => {
                       return new Promise((resolve) => {
+                        // console.log(visitedUrls);
                         // console.log(links);
                         for (const link of links) {
                           crawledLink = count;
@@ -117,14 +118,13 @@ async function crawler(maxDepth, waitingQueue, queue, path, visitedUrls, sid) {
                             });
                             // visitedUrls.add(link);
                           }
+                          console.log("backUPing the data");
                         }
+                        backUp(queue, waitingQueue, visitedUrls, sid);
                         resolve();
                       });
                     })
-                    .then(() => {
-                      console.log("backUPing the data");
-                      backUp(queue, waitingQueue, visitedUrls, sid);
-                    })
+                    .then(() => {})
                 );
               }); //
             } else {

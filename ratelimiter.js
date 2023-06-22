@@ -80,20 +80,31 @@ function rateLimiter(url, depth, domainMap, waitingQueue, crawledLink) {
   let Url = new URL(url);
   let domain = Url.hostname;
   if (domainMap.get("max_connection") === 0) {
+    console.log(
+      `waiting: ${
+        60000 - (Date.now() - domainMap.get(domain).domain_time_stamp)
+      } max_connection reached`
+    );
+    // setTimeout(() => {},
+    // 60000 - (Date.now() - domainMap.get(domain).domain_time_stamp));
     if (Date.now() - domainMap.get(domain).domain_time_stamp >= 60000) {
       console.log(`replenishing the token for domain ${domain}`);
-      domainMap.get(domain).curr_token += 1;
-      domainMap.get(domain).url_time.shift();
-      if (domainMap.get(domain).url_time.length === 0) {
-        domainMap.get(domain).domain_time_stamp = Date.now();
-      } else {
-        domainMap.get(domain).domain_time_stamp =
-          domainMap.get(domain).url_time[0];
-      }
-      domainMap.set("max_connection", domainMap.get("max_connection") + 1);
+      domainMap = new Map();
+      domainMap.set("max_connection", 15);
+
+      // domainMap.get(domain).curr_token = 5;
+      // domainMap.get(domain).url_time.shift();
+      // if (domainMap.get(domain).url_time.length === 0) {
+      // domainMap.get(domain).domain_time_stamp = Date.now();
+      // } else {
+      // domainMap.get(domain).domain_time_stamp =
+      // domainMap.get(domain).url_time[0];
+      // }
+      // domainMap.set("max_connection", domainMap.get("max_connection") + 1);
       // console.log(domainMap.get(domain));
     } else {
-      setTimeout(() => {}, 30000);
+      // setTimeout(() => {},
+      // 60000 - (Date.now() - domainMap.get(domain).domain_time_stamp));
       console.log("Max connection reached!");
 
       // waitingQueue.push({ url: url, depth: depth, time_stamp: Date.now() });
@@ -104,22 +115,27 @@ function rateLimiter(url, depth, domainMap, waitingQueue, crawledLink) {
   if (domainMap.has(domain)) {
     if (Date.now() - domainMap.get(domain).domain_time_stamp >= 60000) {
       console.log(`replenishing the toke for domain ${domain}`);
-      domainMap.get(domain).curr_token += 1;
-      domainMap.get(domain).url_time.shift();
-      if (domainMap.get(domain).url_time.length === 0) {
-        domainMap.get(domain).domain_time_stamp = Date.now();
-      } else {
-        domainMap.get(domain).domain_time_stamp =
-          domainMap.get(domain).url_time[0];
-      }
-      domainMap.set("max_connection", domainMap.get("max_connection") + 1);
+      // domainMap.get(domain).curr_token += 1;
+      domainMap.get(domain).curr_token = 4;
+      // domainMap.get(domain).url_time.shift();
+      // if (domainMap.get(domain).url_time.length === 0) {
+      domainMap.get(domain).domain_time_stamp = Date.now();
+      // } else {
+      // domainMap.get(domain).domain_time_stamp =
+      // domainMap.get(domain).url_time[0];
+      // }
+      // domainMap.set("max_connection", domainMap.get("max_connection") + 1);
+      domainMap.set("max_connection", domainMap.get("max_connection") + 4);
       // console.log(domainMap);
     }
     // console.log(Date.now() - domainMap.get(domain).domain_time_stamp);
     if (domainMap.get(domain).curr_token === 0) {
-      // console.log(`Request limit exceeded`);
+      console.log(`Request limit exceeded for ${domain}`);
       // waitingQueue.push({ url: url, time_stamp: Date.now() });
-      waitingQueue.push({ url: url, depth: depth, crawledLink: crawledLink });
+      // console.log(
+      //   `pushing url ${url} depth${depth} and CrawledLink: ${crawledLink} to waiting Queue`
+      // );
+      waitingQueue.push({ url, depth, crawledLink });
       // console.log(domainMap);
       return false;
     } else {
@@ -128,14 +144,14 @@ function rateLimiter(url, depth, domainMap, waitingQueue, crawledLink) {
       //   decrementing current token by one as we have consumed it now.
       domainMap.get(domain).curr_token -= 1;
       domainMap.set("max_connection", domainMap.get("max_connection") - 1);
-      domainMap.get(domain).url_time.push(Date.now());
+      // domainMap.get(domain).url_time.push(Date.now());
       // console.log(domainMap);
       return true;
     }
   } else {
     console.log("adding domain to the hasMap");
     domainMap.set(domain, {
-      url_time: [Date.now()],
+      // url_time: [Date.now()],
       domain_time_stamp: Date.now(),
       curr_token: 4,
     });

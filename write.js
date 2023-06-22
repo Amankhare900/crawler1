@@ -1,7 +1,7 @@
 const fs = require("fs");
 let WriteLinkToHtml = (path, htmlData, crawledLink) => {
   console.log("In write function ::");
-  console.log(path);
+  // console.log(path);
   if (htmlData === undefined) {
     return;
   }

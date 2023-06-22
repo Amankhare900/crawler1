@@ -91,7 +91,9 @@ if (testing === "t") {
   obj[session_id] = { seedUrl, maxDepth };
   // making the visited set of url so we don't visit same url again and again
   let visitedUrls = new Set();
+
   visitedUrls.add(seedUrl);
+  // console.log("visitedUrls", visitedUrls);
   //here [] implies the waitingQueue
   // queue, waitingQueue, visitedUrls, sid
   backUp(queue, [], visitedUrls, session_id);
@@ -100,7 +102,7 @@ if (testing === "t") {
 
   queue.push({ url: seedUrl, depth: 1, crawledLink: 1 });
   // crawler(maxDepth, queue, path);
-  crawler(maxDepth, [], queue, path, new Set(), session_id);
+  crawler(maxDepth, [], queue, path, visitedUrls, session_id);
 }
 
 // new code start from here

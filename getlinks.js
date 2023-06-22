@@ -1,16 +1,34 @@
 let aTReg = /<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1/g;
-let getLinks = (htmlData, baseUrl) => {
-  let links = new Set();
+
+let getLinks = (htmlData, baseUrl, visitedUrls) => {
   let match;
-  while ((match = aTReg.exec(htmlData))) {
-    const href = match[2];
-    if (checkUrls(href)) {
-      const absoluteUrl = new URL(href, baseUrl).href;
-      links.add(absoluteUrl);
+  let links = [];
+  return new Promise((resolve) => {
+    while ((match = aTReg.exec(htmlData))) {
+      const href = match[2];
+      if (checkUrls(href)) {
+        const absoluteUrl = new URL(href, baseUrl).href;
+        if (!visitedUrls.has(absoluteUrl)) {
+          visitedUrls.add(absoluteUrl);
+          links.push(absoluteUrl);
+        }
+        // console.log(absoluteUrl);
+        // links.add(absoluteUrl);
+      }
     }
-  }
-  return [...links];
+    // resolve(...links);
+    // resolve(Array.from(links));
+    resolve(links);
+  });
 };
+//   while ((match = aTReg.exec(htmlData))) {
+//     const href = match[2];
+//     if (checkUrls(href)) {
+//       const absoluteUrl = new URL(href, baseUrl).href;
+//       links.add(absoluteUrl);
+//     }
+//   }
+//   return [...links];
 
 function checkUrls(href) {
   if (

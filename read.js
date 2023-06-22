@@ -1,8 +1,8 @@
 const fs = require("fs");
 
 let readLinkFromHtml = (path) => {
-  console.log("In the read Html file");
-  console.log(path);
+  console.log("In the read Html file ::");
+  // console.log(path);
   const readFileStream = fs.createReadStream(path);
   let htmlData = "";
   return new Promise((resolve, reject) => {

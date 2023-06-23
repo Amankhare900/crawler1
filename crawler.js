@@ -27,7 +27,7 @@ async function crawler(maxDepth, waitingQueue, queue, path, visitedUrls, sid) {
       console.log("replenishing the waiting queue");
       WaitingQueueReplenishTime = Date.now();
       while (waitingQueue.length > 0) {
-        queue.unshift(waitingQueue.shift());
+        queue.unshift(waitingQueue.pop());
       }
       continue;
     }
@@ -105,8 +105,6 @@ async function crawler(maxDepth, waitingQueue, queue, path, visitedUrls, sid) {
                     })
                     .then((links) => {
                       return new Promise((resolve) => {
-                        // console.log(visitedUrls);
-                        // console.log(links);
                         for (const link of links) {
                           crawledLink = count;
                           if (firstResult.newDepth < maxDepth) {
@@ -116,15 +114,14 @@ async function crawler(maxDepth, waitingQueue, queue, path, visitedUrls, sid) {
                               depth: firstResult.newDepth + 1,
                               crawledLink: crawledLink++,
                             });
-                            // visitedUrls.add(link);
                           }
                           console.log("backUPing the data");
                         }
                         backUp(queue, waitingQueue, visitedUrls, sid);
+                        fs.writeFileSync(`${depth}.txt`, count.toString());
                         resolve();
                       });
                     })
-                    .then(() => {})
                 );
               }); //
             } else {

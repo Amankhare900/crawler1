@@ -1,5 +1,13 @@
 {
   "dependencies": {
+    "jsdom": "^22.1.0",
     "readline-sync": "^1.4.10"
+  },
+  "scripts": {
+    "start": "node main.js",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0"
   }
 }

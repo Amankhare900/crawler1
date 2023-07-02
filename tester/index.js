@@ -13,14 +13,11 @@ function extractText(htmlData) {
   headerChildNodes = Array.from(headerChildNodes).filter((node) => {
     if (node.nodeType === node.TEXT_NODE) {
       if (!node.textContent || node.textContent.trim() === "") {
-        //   console.log("returning false", node);
         return false;
       } else {
-        //   console.log("returning true", node);
         return true;
       }
     } else if (node.nodeType === node.COMMENT_NODE) {
-      // console.log(node);
       return false;
     } else if (
       node.tagName === "META" ||
